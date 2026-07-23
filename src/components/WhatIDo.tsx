@@ -88,10 +88,11 @@ const WhatIDo = () => {
 
             <div className="what-content-in">
               <h3>DEVELOP</h3>
-              <h4>Description</h4>
+              {/* <h4>Description</h4> */}
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas
-                quia aliquid laboriosam ducimus sit molestiae.
+                I build scalable, full-stack web applications. On the frontend, I create dynamic and responsive user 
+                interfaces using JavaScript, React, Next.js, and Tailwind CSS. Under the hood, I design robust 
+                backend architectures and databases using Python, FastAPI, and PostgreSQL
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
@@ -104,7 +105,7 @@ const WhatIDo = () => {
                 <div className="what-tags">Next.js</div>
                 <div className="what-tags">Express.js</div>
                 <div className="what-tags">PHP</div>
-                <div className="what-tags">MySql</div>
+                <div className="what-tags">Postgre Sql</div>
               </div>
               <div className="what-arrow"></div>
             </div>
@@ -129,10 +130,12 @@ const WhatIDo = () => {
             <div className="what-corner"></div>
             <div className="what-content-in">
               <h3>DESIGN</h3>
-              <h4>Description</h4>
+              {/* <h4>Description</h4> */}
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas
-                quia aliquid laboriosam ducimus sit molestiae
+                I specialize in creating immersive visual experiences and intuitive user interfaces.
+                 From crafting detailed 3D models and character designs using Blender and Zbrush to 
+                 bringing them to life with rigging and 3D animation, I blend technical precision with 
+                 creative motion design
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">

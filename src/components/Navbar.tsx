@@ -8,6 +8,46 @@ import "./styles/Navbar.css";
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 export let smoother: ScrollSmoother;
 
+// Custom text-based gradient logo built directly into the Navbar file
+const BrandLogo = () => (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      fontFamily: "system-ui, -apple-system, sans-serif",
+      fontSize: "2rem", 
+      fontWeight: "900",
+      letterSpacing: "2px",
+      userSelect: "none",
+    }}
+  >
+    {/* Left Bracket - Pink Gradient */}
+    <span
+      style={{
+        background: "linear-gradient(to right, #f957b6, #d96be1)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+      }}
+    >
+      &lt;
+    </span>
+    
+    {/* Initials */}
+    <span style={{ color: "#ffffff", margin: "0 2px" }}>US</span>
+    
+    {/* Right Slash & Bracket - Purple Gradient */}
+    <span
+      style={{
+        background: "linear-gradient(to right, #c576ea, #a87ffb)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+      }}
+    >
+      /&gt;
+    </span>
+  </div>
+);
+
 const Navbar = () => {
   useEffect(() => {
     smoother = ScrollSmoother.create({
@@ -31,7 +71,9 @@ const Navbar = () => {
           e.preventDefault();
           let elem = e.currentTarget as HTMLAnchorElement;
           let section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
+          if (section) {
+            smoother.scrollTo(section, true, "top top");
+          }
         }
       });
     });
@@ -39,18 +81,26 @@ const Navbar = () => {
       ScrollSmoother.refresh(true);
     });
   }, []);
+
   return (
     <>
       <div className="header">
-        <a href="/#" className="navbar-title" data-cursor="disable">
-          Logo
+        {/* Logo injected here with text decoration removed to keep the gradients clean */}
+        <a 
+          href="/#" 
+          className="navbar-title" 
+          data-cursor="disable"
+          style={{ textDecoration: "none" }}
+        >
+          <BrandLogo />
         </a>
+        
         <a
           href="mailto:example@mail.com"
           className="navbar-connect"
           data-cursor="disable"
         >
-          example@mail.com
+         {/* (Your email goes here) */}
         </a>
         <ul>
           <li>

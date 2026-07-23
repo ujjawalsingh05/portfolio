@@ -1,60 +1,57 @@
 import "./styles/Career.css";
 
+// Importing directly from the new src/assets folder
+import cert1 from "../assets/cert1.png";
+import cert2 from "../assets/cert2.png";
+import cert3 from "../assets/cert3.png";
+import cert4 from "../assets/cert4.png";
+
 const Career = () => {
   return (
     <div className="career-section section-container">
       <div className="career-container">
         <h2>
-          My career <span>&</span>
-          <br /> experience
+          My <span>Certifications</span>
         </h2>
-        <div className="career-info">
-          <div className="career-timeline">
-            <div className="career-dot"></div>
-          </div>
-          <div className="career-info-box">
-            <div className="career-info-in">
-              <div className="career-role">
-                <h4>Position In Company</h4>
-                <h5>Company Name</h5>
-              </div>
-              <h3>20XX</h3>
+        
+        <div className="certificates-grid">
+          {/* Certificate 1 */}
+          <div className="cert-card">
+            <img src={cert1} alt="Project Management Assessment" className="cert-image" />
+            <div className="cert-details">
+              <h4>Project Management Assessment</h4>
+              <h5>LearnTube.ai</h5>
             </div>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
-              labore sit non ipsum temporibus quidem, deserunt eaque officiis
-              mollitia ratione suscipit repellat.
-            </p>
           </div>
-          <div className="career-info-box">
-            <div className="career-info-in">
-              <div className="career-role">
-                <h4>Position In Company</h4>
-                <h5>Company Name</h5>
-              </div>
-              <h3>20XX</h3>
+
+          {/* Certificate 2 */}
+          <div className="cert-card">
+            <img src={cert2} alt="Technical Participation - COD-A-FESTX 3.0" className="cert-image" />
+            <div className="cert-details">
+              <h4>COD-A-FESTX 3.0 Hackathon</h4>
+              <h5>LYNQUP & LPU</h5>
             </div>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
-              labore sit non ipsum temporibus quidem, deserunt eaque officiis
-              mollitia ratione suscipit repellat.
-            </p>
           </div>
-          <div className="career-info-box">
-            <div className="career-info-in">
-              <div className="career-role">
-                <h4>Position In Company</h4>
-                <h5>Company Name</h5>
-              </div>
-              <h3>NOW</h3>
+
+          {/* Certificate 3 */}
+          <div className="cert-card">
+            <img src={cert3} alt="Introduction to Artificial Intelligence" className="cert-image" />
+            <div className="cert-details">
+              <h4>Introduction to Artificial Intelligence</h4>
+              <h5>Infosys Springboard</h5>
             </div>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim
-              labore sit non ipsum temporibus quidem, deserunt eaque officiis
-              mollitia ratione suscipit repellat.
-            </p>
+          </div>
+
+          {/* Certificate 4 */}
+          <div className="cert-card">
+            <img src={cert4} alt="2nd Position - Cod-A-FestX 3.0" className="cert-image" />
+            <div className="cert-details">
+              <h4>2nd Position: Cod-A-FestX 3.0</h4>
+              <h5>InnovXus & LPU (My First Hackathon Win!)</h5>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
