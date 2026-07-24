@@ -61,7 +61,7 @@ const Contact = () => {
               Designed and Developed <br /> by <span>Ujjawal Singh</span>
             </h2>
             <h5>
-              <MdCopyright /> 2024
+              <MdCopyright /> 2026 Ujjawal Singh. All Rights Reserved.
             </h5>
           </div>
         </div>
