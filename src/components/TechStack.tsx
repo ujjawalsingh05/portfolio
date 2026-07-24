@@ -172,11 +172,11 @@ const TechStack = () => {
   return (
     <>
       {/* 
-        MASSIVE 100vh SEPARATOR: 
-        This is an entire screen's worth of blank space. 
-        If they still overlap with this here, the parent container is breaking the flow.
+        SMALLER SEPARATOR: 
+        Reduced from 100vh down to 10vh to provide just enough space 
+        so sections don't overlap, but without creating a huge blank gap.
       */}
-      <div style={{ width: "100%", height: "100vh", display: "block", clear: "both", visibility: "hidden" }} />
+      <div style={{ width: "100%", height: "10vh", display: "block", clear: "both", visibility: "hidden" }} />
 
       <div 
         className="techstack" 
@@ -186,27 +186,27 @@ const TechStack = () => {
           width: "100%", 
           height: "100vh", 
           overflow: "hidden", 
-          zIndex: 1,
-          marginTop: "100px" // Extra push down
+          zIndex: 1
+          /* Removed marginTop: "100px" to tighten up the spacing further */
         }}
       >
         <h2 
-  style={{ 
-    position: "absolute", 
-    top: "8%", 
-    left: "0", 
-    width: "100%", 
-    textAlign: "center", 
-    zIndex: 10, 
-    margin: 0, 
-    pointerEvents: "none",
-    fontSize: "4rem",      // Controls the size (adjust up or down, e.g., "5rem" or "8vw")
-    fontWeight: "900",     // Controls the thickness (e.g., "bold", "800", or "900")
-    letterSpacing: "2px"   // Optional: adds a nice gap between letters for a cleaner look
-  }}
->
-  MY TECHSTACK
-</h2>
+          style={{ 
+            position: "absolute", 
+            top: "8%", 
+            left: "0", 
+            width: "100%", 
+            textAlign: "center", 
+            zIndex: 10, 
+            margin: 0, 
+            pointerEvents: "none",
+            fontSize: "4rem",      
+            fontWeight: "900",     
+            letterSpacing: "2px"   
+          }}
+        >
+          MY TECHSTACK
+        </h2>
 
         <Canvas
           shadows
