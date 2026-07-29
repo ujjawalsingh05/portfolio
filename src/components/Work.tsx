@@ -24,8 +24,8 @@ const projectsData = [
     name: "Krishi Setu",
     category: "Embedded AI / IoT",
     description:
-      "A solar-powered smart agriculture monitoring system utilizing ESP32-CAM, DHT22, and soil moisture sensors. It processes environmental data at the edge via TinyML and lightweight CNNs to optimize crop health and resource usage.",
-    tech: "ESP32-CAM, Arduino, TinyML, TensorFlow, LDR Sensors",
+      "An AI-powered AgriTech platform that eliminates middlemen by connecting farmers directly to buyers, equipping them with real-time market prices, predictive forecasting, and edge-AI disease detection.",
+    tech: "Next.js, Tailwind CSS, Framer Motion, Flutter, FastAPI, PostgreSQL",
     image: krishisetuImg,
   },
   {
