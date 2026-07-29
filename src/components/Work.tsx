@@ -48,35 +48,116 @@ const projectsData = [
 
 const Work = () => {
   const marqueeRef = useRef<gsap.core.Tween | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     // 1. Infinite Horizontal Auto-Scroll (Marquee)
-    // -50% shifts exactly one full set of projects before looping seamlessly
     marqueeRef.current = gsap.to(".work-flex", {
       xPercent: -50,
       ease: "none",
-      duration: 35, // Adjust higher for slower scroll, lower for faster
+      duration: 35,
       repeat: -1,
     });
 
     // 2. Floating Tile Animation
-    // Alternates vertical floating direction for odd/even cards
     const boxes = gsap.utils.toArray<HTMLElement>(".work-box");
     boxes.forEach((box, index) => {
       gsap.to(box, {
-        y: index % 2 === 0 ? -16 : 16, // Evens float up, odds float down
-        duration: 2.8 + (index % 2) * 0.4, // Slight duration variations for an organic feel
+        y: index % 2 === 0 ? -14 : 14,
+        duration: 2.8 + (index % 2) * 0.4,
         ease: "sine.inOut",
         repeat: -1,
         yoyo: true,
         delay: index * 0.15,
       });
     });
+
+    // 3. Real-Time Center Detection for Glow & Description Reveal
+    const checkCenterHighlight = () => {
+      if (!containerRef.current) return;
+
+      const trackRect = containerRef.current.getBoundingClientRect();
+      const trackCenter = trackRect.left + trackRect.width / 2;
+
+      boxes.forEach((box) => {
+        const boxRect = box.getBoundingClientRect();
+        const boxCenter = boxRect.left + boxRect.width / 2;
+        const distanceFromCenter = Math.abs(trackCenter - boxCenter);
+
+        // Distance threshold for when a card is considered "In Front / Center"
+        const isCenter = distanceFromCenter < 220;
+
+        const infoText = box.querySelector(".work-description-wrap");
+        const titleText = box.querySelector("h4");
+
+        if (isCenter) {
+          // Glow and focus state for center card
+          gsap.to(box, {
+            boxShadow: "0 0 35px rgba(168, 85, 247, 0.45), inset 0 0 15px rgba(168, 85, 247, 0.2)",
+            borderColor: "rgba(168, 85, 247, 0.8)",
+            scale: 1.04,
+            duration: 0.4,
+            overwrite: "auto",
+          });
+
+          // Text/Description Animation Reveal
+          if (infoText) {
+            gsap.to(infoText, {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.4,
+              overwrite: "auto",
+            });
+          }
+
+          if (titleText) {
+            gsap.to(titleText, {
+              color: "#c084fc", // Glowing light purple for active project title
+              duration: 0.3,
+            });
+          }
+        } else {
+          // Default un-highlighted state
+          gsap.to(box, {
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
+            borderColor: "rgba(255, 255, 255, 0.08)",
+            scale: 0.96,
+            duration: 0.4,
+            overwrite: "auto",
+          });
+
+          if (infoText) {
+            gsap.to(infoText, {
+              opacity: 0.5,
+              y: 8,
+              filter: "blur(1px)",
+              duration: 0.4,
+              overwrite: "auto",
+            });
+          }
+
+          if (titleText) {
+            gsap.to(titleText, {
+              color: "#ffffff",
+              duration: 0.3,
+            });
+          }
+        }
+      });
+    };
+
+    // Attach center checker to GSAP's frame ticker
+    gsap.ticker.add(checkCenterHighlight);
+
+    return () => {
+      gsap.ticker.remove(checkCenterHighlight);
+    };
   }, []);
 
   return (
-    <div 
-      className="work-section" 
+    <div
+      className="work-section"
       id="work"
       style={{ overflow: "hidden", position: "relative" }}
     >
@@ -86,15 +167,12 @@ const Work = () => {
         </h2>
 
         <div
+          ref={containerRef}
           className="work-track"
-          style={{ width: "100%", overflow: "hidden" }}
+          style={{ width: "100%", overflow: "hidden", padding: "40px 0" }}
           onMouseEnter={() => marqueeRef.current?.pause()}
           onMouseLeave={() => marqueeRef.current?.play()}
         >
-          {/* 
-            Rendering projectsData TWICE ([...projectsData, ...projectsData]) 
-            allows the loop to reset seamlessly without any blank gap.
-          */}
           <div
             className="work-flex"
             style={{
@@ -112,7 +190,13 @@ const Work = () => {
                   key={index}
                   style={{
                     flexShrink: 0,
-                    marginRight: "2rem", // Spacing between tiles
+                    marginRight: "2.5rem",
+                    borderRadius: "18px",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                    backgroundColor: "rgba(15, 15, 20, 0.85)",
+                    backdropFilter: "blur(12px)",
+                    transition: "border-color 0.3s ease",
+                    padding: "2rem",
                   }}
                 >
                   <div className="work-info">
@@ -124,11 +208,19 @@ const Work = () => {
                       </div>
                     </div>
 
-                    <h4>Overview</h4>
-                    <p>{project.description}</p>
+                    {/* Animated Wrap for Overview and Tech Stack */}
+                    <div
+                      className="work-description-wrap"
+                      style={{
+                        willChange: "transform, opacity, filter",
+                      }}
+                    >
+                      <h4>Overview</h4>
+                      <p>{project.description}</p>
 
-                    <h4 style={{ marginTop: "20px" }}>Tech Stack</h4>
-                    <p>{project.tech}</p>
+                      <h4 style={{ marginTop: "20px" }}>Tech Stack</h4>
+                      <p>{project.tech}</p>
+                    </div>
                   </div>
 
                   <WorkImage
