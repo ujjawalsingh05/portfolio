@@ -48,7 +48,6 @@ const projectsData = [
 
 const Work = () => {
   const marqueeRef = useRef<gsap.core.Tween | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     // 1. Infinite Horizontal Auto-Scroll (Marquee)
@@ -74,58 +73,58 @@ const Work = () => {
 
     // 3. Real-Time Center Detection for Glow & Description Reveal
     const checkCenterHighlight = () => {
-      if (!containerRef.current) return;
-
-      const trackRect = containerRef.current.getBoundingClientRect();
-      const trackCenter = trackRect.left + trackRect.width / 2;
+      const screenCenter = window.innerWidth / 2;
 
       boxes.forEach((box) => {
         const boxRect = box.getBoundingClientRect();
         const boxCenter = boxRect.left + boxRect.width / 2;
-        const distanceFromCenter = Math.abs(trackCenter - boxCenter);
+        const distanceFromCenter = Math.abs(screenCenter - boxCenter);
 
-        // Distance threshold for when a card is considered "In Front / Center"
-        const isCenter = distanceFromCenter < 220;
+        // A threshold of ~300px ensures a smooth transition between boxes
+        const isCenter = distanceFromCenter < 300;
+        
+        // This is the FIX: Check if we ALREADY animated it to prevent 60fps stuttering
+        const isAlreadyActive = box.dataset.active === "true";
 
         const infoText = box.querySelector(".work-description-wrap");
         const titleText = box.querySelector("h4");
 
-        if (isCenter) {
-          // Glow and focus state for center card
-          // Removed the hard border color shift, added a gradient-like multi-shadow (Purple on left, Fuchsia on right)
+        if (isCenter && !isAlreadyActive) {
+          // It just entered the center! Mark it as active.
+          box.dataset.active = "true";
+
           gsap.to(box, {
             boxShadow: "-15px 0 45px rgba(168, 85, 247, 0.4), 15px 0 45px rgba(217, 70, 239, 0.4)",
-            borderColor: "rgba(255, 255, 255, 0.08)", // Keeps border static
             scale: 1.04,
-            duration: 0.4,
-            overwrite: "auto",
+            duration: 0.5,
+            ease: "power2.out"
           });
 
-          // Text/Description Animation Reveal
           if (infoText) {
             gsap.to(infoText, {
               opacity: 1,
               y: 0,
               filter: "blur(0px)",
-              duration: 0.4,
-              overwrite: "auto",
+              duration: 0.5,
+              ease: "power2.out"
             });
           }
 
           if (titleText) {
             gsap.to(titleText, {
               color: "#c084fc", // Glowing light purple for active project title
-              duration: 0.3,
+              duration: 0.4,
             });
           }
-        } else {
-          // Default un-highlighted state
+        } else if (!isCenter && isAlreadyActive) {
+          // It just left the center! Mark it as inactive.
+          box.dataset.active = "false";
+
           gsap.to(box, {
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
-            borderColor: "rgba(255, 255, 255, 0.08)",
             scale: 0.96,
-            duration: 0.4,
-            overwrite: "auto",
+            duration: 0.5,
+            ease: "power2.out"
           });
 
           if (infoText) {
@@ -133,15 +132,15 @@ const Work = () => {
               opacity: 0.5,
               y: 8,
               filter: "blur(1px)",
-              duration: 0.4,
-              overwrite: "auto",
+              duration: 0.5,
+              ease: "power2.out"
             });
           }
 
           if (titleText) {
             gsap.to(titleText, {
               color: "#ffffff",
-              duration: 0.3,
+              duration: 0.4,
             });
           }
         }
@@ -168,7 +167,6 @@ const Work = () => {
         </h2>
 
         <div
-          ref={containerRef}
           className="work-track"
           style={{ width: "100%", overflow: "hidden", padding: "40px 0" }}
           onMouseEnter={() => marqueeRef.current?.pause()}
@@ -189,6 +187,8 @@ const Work = () => {
                 <div
                   className="work-box"
                   key={index}
+                  // data-active initialized to false
+                  data-active="false"
                   style={{
                     flexShrink: 0,
                     marginRight: "2.5rem",
@@ -198,11 +198,12 @@ const Work = () => {
                     backdropFilter: "blur(12px)",
                     transition: "border-color 0.3s ease",
                     padding: "2rem",
+                    scale: 0.96, // Start slightly scaled down
                   }}
                 >
                   <div className="work-info">
                     <div className="work-title">
-                      {/* Applied the purple theme color directly to the serial number with a subtle text glow */}
+                      {/* Serial Number Colored Purple */}
                       <h3 style={{ color: "#c084fc", textShadow: "0 0 12px rgba(192, 132, 252, 0.4)" }}>
                         0{originalIndex}
                       </h3>
@@ -212,11 +213,14 @@ const Work = () => {
                       </div>
                     </div>
 
-                    {/* Animated Wrap for Overview and Tech Stack */}
+                    {/* Animated Wrap for Overview and Tech Stack (Starts hidden/dimmed) */}
                     <div
                       className="work-description-wrap"
                       style={{
                         willChange: "transform, opacity, filter",
+                        opacity: 0.5,
+                        filter: "blur(1px)",
+                        transform: "translateY(8px)",
                       }}
                     >
                       <h4>Overview</h4>
