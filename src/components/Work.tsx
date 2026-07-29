@@ -22,7 +22,7 @@ const projectsData = [
   },
   {
     name: "Krishi Setu",
-    category: "Embedded AI / IoT",
+    category: "Market Intelligence Platform",
     description:
       "An AI-powered AgriTech platform that eliminates middlemen by connecting farmers directly to buyers, equipping them with real-time market prices, predictive forecasting, and edge-AI disease detection.",
     tech: "Next.js, Tailwind CSS, Framer Motion, Flutter, FastAPI, PostgreSQL",
@@ -92,9 +92,10 @@ const Work = () => {
 
         if (isCenter) {
           // Glow and focus state for center card
+          // Removed the hard border color shift, added a gradient-like multi-shadow (Purple on left, Fuchsia on right)
           gsap.to(box, {
-            boxShadow: "0 0 35px rgba(168, 85, 247, 0.45), inset 0 0 15px rgba(168, 85, 247, 0.2)",
-            borderColor: "rgba(168, 85, 247, 0.8)",
+            boxShadow: "-15px 0 45px rgba(168, 85, 247, 0.4), 15px 0 45px rgba(217, 70, 239, 0.4)",
+            borderColor: "rgba(255, 255, 255, 0.08)", // Keeps border static
             scale: 1.04,
             duration: 0.4,
             overwrite: "auto",
@@ -201,7 +202,10 @@ const Work = () => {
                 >
                   <div className="work-info">
                     <div className="work-title">
-                      <h3>0{originalIndex}</h3>
+                      {/* Applied the purple theme color directly to the serial number with a subtle text glow */}
+                      <h3 style={{ color: "#c084fc", textShadow: "0 0 12px rgba(192, 132, 252, 0.4)" }}>
+                        0{originalIndex}
+                      </h3>
                       <div>
                         <h4>{project.name}</h4>
                         <p>{project.category}</p>
