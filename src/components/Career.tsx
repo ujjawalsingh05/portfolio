@@ -46,62 +46,43 @@ const Career = () => {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    // 1. Staggered Entrance Animation on Scroll
-    gsap.from(cardsRef.current, {
+    // Filter out any null refs
+    const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+
+    // Create a timeline so the floating effect starts ONLY after they enter the screen
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top 80%", // Triggers when the section is 20% visible
       },
+    });
+
+    // 1. Initial Staggered Entrance
+    tl.from(cards, {
       y: 60,
       opacity: 0,
       duration: 0.8,
       stagger: 0.15,
       ease: "power3.out",
     });
+
+    // 2. Continuous Visual Breathing / Glowing Effect (Auto-runs forever)
+    tl.add(() => {
+      cards.forEach((card, index) => {
+        gsap.to(card, {
+          y: index % 2 === 0 ? -12 : 12, // Evens float up, odds float down
+          boxShadow: "0 0 25px rgba(168, 85, 247, 0.4), inset 0 0 10px rgba(168, 85, 247, 0.1)", // Ambient purple glow
+          borderColor: "rgba(168, 85, 247, 0.5)", // Pulses border to purple
+          duration: 2.5 + (index % 2) * 0.5, // Slightly offset durations for an organic feel
+          yoyo: true, // Go back and forth
+          repeat: -1, // Loop infinitely
+          ease: "sine.inOut",
+          delay: index * 0.1, // Stagger the start of the float
+        });
+      });
+    });
+
   }, { scope: containerRef });
-
-  // 2. 3D Hover Tilt Logic
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
-    const card = cardsRef.current[index];
-    if (!card) return;
-
-    const rect = card.getBoundingClientRect();
-    
-    // Calculate mouse position relative to the center of the card
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    // Calculate rotation angles (max 10 degrees)
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
-
-    gsap.to(card, {
-      rotateX: rotateX,
-      rotateY: rotateY,
-      boxShadow: "0 20px 40px rgba(168, 85, 247, 0.25)", // Subtle purple glow on hover
-      borderColor: "rgba(168, 85, 247, 0.4)",
-      transformPerspective: 1000,
-      duration: 0.4,
-      ease: "power2.out",
-    });
-  };
-
-  const handleMouseLeave = (index: number) => {
-    const card = cardsRef.current[index];
-    if (!card) return;
-
-    // Reset back to normal flat state
-    gsap.to(card, {
-      rotateX: 0,
-      rotateY: 0,
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", // Original dark shadow
-      borderColor: "rgba(255, 255, 255, 0.05)", // Assuming slight border from your CSS
-      duration: 0.7,
-      ease: "power2.out",
-    });
-  };
 
   return (
     <div className="career-section section-container" ref={containerRef}>
@@ -110,7 +91,7 @@ const Career = () => {
           My <span>Certifications</span>
         </h2>
 
-        <div className="certificates-grid" style={{ perspective: "1000px" }}>
+        <div className="certificates-grid">
           {certificatesData.map((cert, index) => (
             <div
               key={cert.id}
@@ -118,27 +99,31 @@ const Career = () => {
                 cardsRef.current[index] = el;
               }}
               className="cert-card"
-              onMouseMove={(e) => handleMouseMove(e, index)}
-              onMouseLeave={() => handleMouseLeave(index)}
               style={{
-                willChange: "transform",
-                transformStyle: "preserve-3d", // Keeps the image flat while the card rotates
-                transition: "border-color 0.3s ease",
+                willChange: "transform, box-shadow, border-color", // Optimizes performance for constant animation
                 border: "1px solid rgba(255, 255, 255, 0.05)",
+                backgroundColor: "rgba(15, 15, 20, 0.85)", // Matches your dark theme
+                borderRadius: "16px",
+                padding: "20px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", // Base shadow before the glow kicks in
               }}
             >
               <img
                 src={cert.image}
                 alt={cert.title}
                 className="cert-image"
-                style={{ transform: "translateZ(30px)" }} // Pops the image slightly out of the card during 3D tilt
+                style={{ borderRadius: "8px", width: "100%", height: "auto" }}
               />
-              <div 
-                className="cert-details"
-                style={{ transform: "translateZ(40px)" }} // Pops the text even further out
-              >
-                <h4>{cert.title}</h4>
-                <h5 style={{ color: "#c084fc", marginTop: "4px" }}>{cert.issuer}</h5>
+              <div className="cert-details">
+                <h4 style={{ color: "#ffffff", fontSize: "1.1rem", marginBottom: "4px" }}>
+                  {cert.title}
+                </h4>
+                <h5 style={{ color: "#c084fc", fontSize: "0.9rem", fontWeight: "normal" }}>
+                  {cert.issuer}
+                </h5>
               </div>
             </div>
           ))}
