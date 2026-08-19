@@ -11,6 +11,8 @@ import cert1 from "../assets/cert1.png";
 import cert2 from "../assets/cert2.png";
 import cert3 from "../assets/cert3.png";
 import cert4 from "../assets/cert4.png";
+import cert5 from "../assets/cert5.png"; // New Certificate 5
+import cert6 from "../assets/cert6.png"; // New Certificate 6
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -38,6 +40,18 @@ const certificatesData = [
     title: "2nd Position: Cod-A-FestX 3.0",
     issuer: "InnovXus & LPU (My First Hackathon Win!)",
     image: cert4,
+  },
+  {
+    id: 5,
+    title: "Inovation Expo 2026", // Update this text
+    issuer: "The participation in Innotech 2026 LPU",       // Update this text
+    image: cert5, 
+  },
+  {
+    id: 6,
+    title: "Workshop on Web Development", // Update this text
+    issuer: "Fullstack Intelligence 1.0 (Hackathon for AI&ML)",       // Update this text
+    image: cert6,
   },
 ];
 
