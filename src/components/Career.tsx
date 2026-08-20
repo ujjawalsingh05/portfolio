@@ -42,7 +42,7 @@ const allCertificates = [
   },
   {
     id: "cert5",
-    title: "Inovation Expo 2026", 
+    title: "Innovation Expo 2026", 
     issuer: "Innotech 2026 LPU",       
     image: cert5, 
   },
@@ -146,15 +146,19 @@ const Career = () => {
 
   return (
     <div
-      className="career-section section-container"
+      className="career-section" // Removed 'section-container' to avoid its CSS overriding our flex row
       ref={containerRef}
       style={{
         position: "relative",
         width: "100%",
         height: "100vh",
         display: "flex",
+        flexDirection: "row", // Force left/right split
+        alignItems: "center",
+        justifyContent: "space-between",
         overflow: "hidden",
         backgroundColor: "transparent",
+        paddingTop: "60px", // Accommodate navbar
       }}
     >
       {/* MASSIVE BACKGROUND TEXT */}
@@ -164,20 +168,21 @@ const Career = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          fontSize: "18vw",
+          fontSize: "16vw",
           fontWeight: "900",
           color: "rgba(255, 255, 255, 0.02)",
           pointerEvents: "none",
           zIndex: 0,
+          whiteSpace: "nowrap",
         }}
       >
-        ACHIEVE
+        ACHIEVEMENTS
       </div>
 
       {/* LEFT SIDE: DYNAMIC TEXT */}
       <div
         style={{
-          width: "50%",
+          width: "45%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
@@ -187,12 +192,12 @@ const Career = () => {
         }}
       >
         <div style={{ marginBottom: "50px" }}>
-          <h2 style={{ fontSize: "3rem", color: "#ffffff", margin: 0, fontWeight: "900" }}>
-            Honors & <span style={{ color: "#c084fc" }}>Certifications</span>
+          <h2 style={{ fontSize: "3.5rem", color: "#ffffff", margin: 0, fontWeight: "900" }}>
+            Honors & <br/><span style={{ color: "#c084fc" }}>Certifications</span>
           </h2>
         </div>
 
-        <div style={{ position: "relative", height: "180px" }}>
+        <div style={{ position: "relative", height: "200px", width: "100%" }}>
           {allCertificates.map((cert) => (
             <div
               key={cert.id}
@@ -202,6 +207,7 @@ const Career = () => {
                 position: "absolute",
                 top: 0,
                 left: 0,
+                width: "100%",
                 opacity: 0, 
                 pointerEvents: "none",
               }}
@@ -216,7 +222,7 @@ const Career = () => {
                   {cert.badge}
                 </div>
               )}
-              <h3 style={{ fontSize: "2.8rem", color: "#ffffff", fontWeight: "bold", margin: "0 0 10px 0", lineHeight: 1.1 }}>
+              <h3 style={{ fontSize: "2.5rem", color: "#ffffff", fontWeight: "bold", margin: "0 0 10px 0", lineHeight: 1.2 }}>
                 {cert.title}
               </h3>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -236,10 +242,11 @@ const Career = () => {
         onMouseEnter={() => trackRef.current?.pause()}
         onMouseLeave={() => trackRef.current?.play()}
         style={{
-          width: "50%",
+          width: "55%",
           height: "100%",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "flex-end", // Pushes the loop to the right edge
+          paddingRight: "8%",
           alignItems: "center",
           zIndex: 10,
           maskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
@@ -251,7 +258,7 @@ const Career = () => {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "60px",
+            gap: "50px",
             paddingTop: "50vh",
           }}
         >
@@ -262,8 +269,8 @@ const Career = () => {
               data-id={cert.id}
               data-active="false"
               style={{
-                width: "400px", 
-                height: "280px", 
+                width: "420px", 
+                height: "290px", 
                 borderRadius: "16px",
                 border: "1px solid rgba(255, 255, 255, 0.05)",
                 backgroundColor: "rgba(20, 20, 25, 0.7)",
