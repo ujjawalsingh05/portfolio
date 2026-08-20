@@ -21,36 +21,48 @@ const allCertificates = [
     issuer: "InnovXus & LPU",
     image: cert4,
     badge: "🏆 Hackathon Winner",
+    isWinner: true, // Used to trigger the special Gold Glow
+    description: "Secured 2nd place in a high-stakes development sprint. Proved my ability to architect scalable solutions, thrive under pressure, and turn complex problems into winning tech out of numerous competing teams.",
   },
   {
     id: "cert1",
     title: "Project Management Assessment",
     issuer: "LearnTube.ai",
     image: cert1,
+    isWinner: false,
+    description: "Demonstrated foundational knowledge in agile methodologies, cross-functional team collaboration, and effective project lifecycle execution.",
   },
   {
     id: "cert2",
     title: "COD-A-FESTX 3.0 Hackathon",
     issuer: "LYNQUP & LPU",
     image: cert2,
+    isWinner: false,
+    description: "Officially recognized for active technical contributions and collaborative problem-solving during the rigorous development phases of the hackathon.",
   },
   {
     id: "cert3",
     title: "Intro to Artificial Intelligence",
     issuer: "Infosys Springboard",
     image: cert3,
+    isWinner: false,
+    description: "Mastered the core concepts of AI, diving into machine learning algorithms, neural network foundations, and real-world intelligent applications.",
   },
   {
     id: "cert5",
     title: "Innovation Expo 2026", 
     issuer: "Innotech 2026 LPU",       
     image: cert5, 
+    isWinner: false,
+    description: "Showcased innovative project work and technical proficiency alongside top engineering peers at the university's premier technology exhibition.",
   },
   {
     id: "cert6",
     title: "Workshop on Web Development", 
     issuer: "Fullstack Intelligence 1.0",       
     image: cert6,
+    isWinner: false,
+    description: "Gained hands-on experience in modern full-stack web development workflows, focusing on responsive UI design and backend integration.",
   },
 ];
 
@@ -63,7 +75,7 @@ const Career = () => {
     trackRef.current = gsap.to(".certs-track", {
       yPercent: -50,
       ease: "none",
-      duration: 25, 
+      duration: 30, // Slowed down slightly so the new text is easy to read
       repeat: -1,
     });
 
@@ -88,17 +100,25 @@ const Career = () => {
         const isCenter = distanceFromCenter < 120;
         const isAlreadyActive = cert.dataset.active === "true";
         const certId = cert.dataset.id;
+        const isWinner = cert.dataset.winner === "true";
         
         const targetText = document.querySelector(`.cert-text-${certId}`) as HTMLElement;
 
         if (isCenter && !isAlreadyActive) {
           cert.dataset.active = "true";
           
+          // Determine Glow Type: Gold for Winner, Bright Purple for others
+          const activeGlow = isWinner 
+            ? "0 0 45px rgba(234, 179, 8, 0.5), inset 0 0 20px rgba(168, 85, 247, 0.3)" // Epic Gold + Purple
+            : "0 0 40px rgba(168, 85, 247, 0.6), inset 0 0 15px rgba(168, 85, 247, 0.2)"; // Intense Neon Purple
+
+          const activeBorder = isWinner ? "rgba(234, 179, 8, 0.8)" : "rgba(168, 85, 247, 0.8)";
+
           gsap.to(cert, {
-            scale: 1.05,
+            scale: 1.08, // Pops out slightly more
             opacity: 1,
-            boxShadow: "0 0 30px rgba(168, 85, 247, 0.4)",
-            borderColor: "rgba(168, 85, 247, 0.6)",
+            boxShadow: activeGlow,
+            borderColor: activeBorder,
             duration: 0.4,
             ease: "power2.out",
           });
@@ -107,16 +127,16 @@ const Career = () => {
             targetText.dataset.active = "true";
             gsap.fromTo(
               targetText,
-              { y: 30, opacity: 0 },
-              { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" }
+              { y: 40, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", overwrite: "auto" }
             );
           }
         } else if (!isCenter && isAlreadyActive) {
           cert.dataset.active = "false";
 
           gsap.to(cert, {
-            scale: 0.9,
-            opacity: 0.4,
+            scale: 0.85, // Shrinks back down
+            opacity: 0.3, // Dims out
             boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
             borderColor: "rgba(255, 255, 255, 0.05)",
             duration: 0.4,
@@ -126,7 +146,7 @@ const Career = () => {
           if (targetText && targetText.dataset.active === "true") {
             targetText.dataset.active = "false";
             gsap.to(targetText, {
-              y: -30,
+              y: -40,
               opacity: 0,
               duration: 0.4,
               ease: "power2.out",
@@ -146,19 +166,19 @@ const Career = () => {
 
   return (
     <div
-      className="career-section" // Removed 'section-container' to avoid its CSS overriding our flex row
+      className="career-section" 
       ref={containerRef}
       style={{
         position: "relative",
         width: "100%",
         height: "100vh",
         display: "flex",
-        flexDirection: "row", // Force left/right split
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         overflow: "hidden",
         backgroundColor: "transparent",
-        paddingTop: "60px", // Accommodate navbar
+        paddingTop: "60px", 
       }}
     >
       {/* MASSIVE BACKGROUND TEXT */}
@@ -168,7 +188,7 @@ const Career = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          fontSize: "16vw",
+          fontSize: "15vw",
           fontWeight: "900",
           color: "rgba(255, 255, 255, 0.02)",
           pointerEvents: "none",
@@ -197,7 +217,7 @@ const Career = () => {
           </h2>
         </div>
 
-        <div style={{ position: "relative", height: "200px", width: "100%" }}>
+        <div style={{ position: "relative", height: "260px", width: "100%" }}>
           {allCertificates.map((cert) => (
             <div
               key={cert.id}
@@ -207,7 +227,7 @@ const Career = () => {
                 position: "absolute",
                 top: 0,
                 left: 0,
-                width: "100%",
+                width: "95%",
                 opacity: 0, 
                 pointerEvents: "none",
               }}
@@ -217,20 +237,29 @@ const Career = () => {
                   display: "inline-block",
                   background: "rgba(234, 179, 8, 0.15)", color: "#facc15",
                   padding: "6px 14px", borderRadius: "20px", fontSize: "0.85rem", fontWeight: "bold",
-                  border: "1px solid rgba(234, 179, 8, 0.3)", marginBottom: "15px"
+                  border: "1px solid rgba(234, 179, 8, 0.3)", marginBottom: "15px",
+                  boxShadow: "0 0 15px rgba(234, 179, 8, 0.2)" // Subtle glow on the badge itself
                 }}>
                   {cert.badge}
                 </div>
               )}
-              <h3 style={{ fontSize: "2.5rem", color: "#ffffff", fontWeight: "bold", margin: "0 0 10px 0", lineHeight: 1.2 }}>
+              
+              <h3 style={{ fontSize: "2.4rem", color: "#ffffff", fontWeight: "bold", margin: "0 0 10px 0", lineHeight: 1.2 }}>
                 {cert.title}
               </h3>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
                 <div style={{ width: "3px", height: "16px", backgroundColor: "#c084fc" }} />
                 <span style={{ color: "#a3a3a3", fontSize: "1.1rem", letterSpacing: "1px" }}>
                   {cert.issuer}
                 </span>
               </div>
+
+              {/* Added Description Paragraph */}
+              <p style={{ color: "#d1d5db", fontSize: "1.05rem", lineHeight: 1.6, margin: 0 }}>
+                {cert.description}
+              </p>
+
             </div>
           ))}
         </div>
@@ -245,12 +274,12 @@ const Career = () => {
           width: "55%",
           height: "100%",
           display: "flex",
-          justifyContent: "flex-end", // Pushes the loop to the right edge
+          justifyContent: "flex-end", 
           paddingRight: "8%",
           alignItems: "center",
           zIndex: 10,
-          maskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
+          maskImage: "linear-gradient(to bottom, transparent, black 25%, black 75%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 25%, black 75%, transparent)",
         }}
       >
         <div
@@ -267,6 +296,7 @@ const Career = () => {
               key={index}
               className="cert-image-wrapper"
               data-id={cert.id}
+              data-winner={cert.isWinner} // Tells GSAP if it gets the Gold Glow
               data-active="false"
               style={{
                 width: "420px", 
@@ -278,11 +308,12 @@ const Career = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                opacity: 0.4, 
-                transform: "scale(0.9)", 
+                opacity: 0.3, // Starts dimmer
+                transform: "scale(0.85)", // Starts smaller
                 cursor: "pointer",
                 boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
-                overflow: "hidden"
+                overflow: "hidden",
+                transition: "border-color 0.3s ease",
               }}
             >
               <img
