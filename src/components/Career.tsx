@@ -11,12 +11,25 @@ import cert1 from "../assets/cert1.png";
 import cert2 from "../assets/cert2.png";
 import cert3 from "../assets/cert3.png";
 import cert4 from "../assets/cert4.png";
-import cert5 from "../assets/cert5.png"; // New Certificate 5
-import cert6 from "../assets/cert6.png"; // New Certificate 6
+import cert5 from "../assets/cert5.png"; 
+import cert6 from "../assets/cert6.png"; 
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const certificatesData = [
+// 1. Split Data: Honors & Awards (The Big Wins)
+const honorsData = [
+  {
+    id: 4,
+    title: "2nd Position: Cod-A-FestX 3.0",
+    issuer: "InnovXus & LPU (My First Hackathon Win!)",
+    image: cert4,
+    badge: "🏆 Hackathon Winner",
+    highlight: true, // Triggers the special golden/purple UI
+  },
+];
+
+// 2. Split Data: Learning & Certifications (Courses & Participation)
+const certificationsData = [
   {
     id: 1,
     title: "Project Management Assessment",
@@ -36,21 +49,15 @@ const certificatesData = [
     image: cert3,
   },
   {
-    id: 4,
-    title: "2nd Position: Cod-A-FestX 3.0",
-    issuer: "InnovXus & LPU (My First Hackathon Win!)",
-    image: cert4,
-  },
-  {
     id: 5,
-    title: "Inovation Expo 2026", // Update this text
-    issuer: "The participation in Innotech 2026 LPU",       // Update this text
+    title: "Inovation Expo 2026", 
+    issuer: "The participation in Innotech 2026 LPU",       
     image: cert5, 
   },
   {
     id: 6,
-    title: "Workshop on Web Development", // Update this text
-    issuer: "Fullstack Intelligence 1.0 (Hackathon for AI&ML)",       // Update this text
+    title: "Workshop on Web Development", 
+    issuer: "Fullstack Intelligence 1.0 (Hackathon for AI&ML)",       
     image: cert6,
   },
 ];
@@ -60,88 +67,135 @@ const Career = () => {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useGSAP(() => {
-    // Filter out any null refs
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
 
-    // Create a timeline so the floating effect starts ONLY after they enter the screen
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
-        start: "top 80%", // Triggers when the section is 20% visible
+        start: "top 75%", 
       },
     });
 
-    // 1. Initial Staggered Entrance
+    // Staggered Entrance
     tl.from(cards, {
-      y: 60,
+      y: 50,
       opacity: 0,
       duration: 0.8,
-      stagger: 0.15,
+      stagger: 0.1,
       ease: "power3.out",
     });
 
-    // 2. Continuous Visual Breathing / Glowing Effect (Auto-runs forever)
+    // Ambient Levitation Effect
     tl.add(() => {
       cards.forEach((card, index) => {
+        const isHighlight = card.dataset.highlight === "true";
+        
+        // Give the featured award a unique golden/purple glow, others get standard purple
+        const activeShadow = isHighlight 
+          ? "0 0 30px rgba(234, 179, 8, 0.3), inset 0 0 15px rgba(168, 85, 247, 0.2)" 
+          : "0 0 20px rgba(168, 85, 247, 0.25), inset 0 0 10px rgba(168, 85, 247, 0.05)";
+
         gsap.to(card, {
-          y: index % 2 === 0 ? -12 : 12, // Evens float up, odds float down
-          boxShadow: "0 0 25px rgba(168, 85, 247, 0.4), inset 0 0 10px rgba(168, 85, 247, 0.1)", // Ambient purple glow
-          borderColor: "rgba(168, 85, 247, 0.5)", // Pulses border to purple
-          duration: 2.5 + (index % 2) * 0.5, // Slightly offset durations for an organic feel
-          yoyo: true, // Go back and forth
-          repeat: -1, // Loop infinitely
+          y: index % 2 === 0 ? -8 : 8,
+          boxShadow: activeShadow,
+          duration: 3 + (index % 2) * 0.5,
+          yoyo: true,
+          repeat: -1,
           ease: "sine.inOut",
-          delay: index * 0.1, // Stagger the start of the float
+          delay: index * 0.15,
         });
       });
     });
 
   }, { scope: containerRef });
 
-  return (
-    <div className="career-section section-container" ref={containerRef}>
-      <div className="career-container">
-        <h2>
-          My <span>Certifications</span>
-        </h2>
+  // Helper to add refs seamlessly across both mapped arrays
+  const addToRefs = (el: HTMLDivElement | null) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
 
-        <div className="certificates-grid">
-          {certificatesData.map((cert, index) => (
-            <div
-              key={cert.id}
-              ref={(el) => {
-                cardsRef.current[index] = el;
-              }}
-              className="cert-card"
-              style={{
-                willChange: "transform, box-shadow, border-color", // Optimizes performance for constant animation
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                backgroundColor: "rgba(15, 15, 20, 0.85)", // Matches your dark theme
-                borderRadius: "16px",
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)", // Base shadow before the glow kicks in
-              }}
-            >
-              <img
-                src={cert.image}
-                alt={cert.title}
-                className="cert-image"
-                style={{ borderRadius: "8px", width: "100%", height: "auto" }}
-              />
-              <div className="cert-details">
-                <h4 style={{ color: "#ffffff", fontSize: "1.1rem", marginBottom: "4px" }}>
+  return (
+    <div className="career-section section-container" ref={containerRef} style={{ padding: "100px 0" }}>
+      <div className="career-container" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+        
+        {/* HONORS & AWARDS SECTION */}
+        <div style={{ marginBottom: "80px" }}>
+          <h2 style={{ fontSize: "3rem", fontWeight: "900", marginBottom: "40px", textAlign: "center" }}>
+            Honors & <span>Awards</span>
+          </h2>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "30px" }}>
+            {honorsData.map((award) => (
+              <div
+                key={award.id}
+                ref={addToRefs}
+                data-highlight="true"
+                style={{
+                  position: "relative",
+                  border: "1px solid rgba(234, 179, 8, 0.4)", // Gold tinted border
+                  background: "linear-gradient(145deg, rgba(20, 15, 30, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%)",
+                  borderRadius: "20px",
+                  padding: "24px",
+                  overflow: "hidden",
+                  backdropFilter: "blur(16px)",
+                }}
+              >
+                {/* Winner Badge */}
+                <div style={{
+                  position: "absolute", top: "20px", right: "20px",
+                  background: "rgba(234, 179, 8, 0.15)", color: "#facc15",
+                  padding: "6px 14px", borderRadius: "20px", fontSize: "0.85rem", fontWeight: "bold",
+                  border: "1px solid rgba(234, 179, 8, 0.3)", zIndex: 10
+                }}>
+                  {award.badge}
+                </div>
+
+                <img src={award.image} alt={award.title} style={{ borderRadius: "12px", width: "100%", height: "auto", marginBottom: "20px", boxShadow: "0 8px 30px rgba(0,0,0,0.5)" }} />
+                
+                <h4 style={{ color: "#ffffff", fontSize: "1.3rem", fontWeight: "bold", marginBottom: "8px" }}>
+                  {award.title}
+                </h4>
+                <h5 style={{ color: "#c084fc", fontSize: "1rem" }}>{award.issuer}</h5>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* LEARNING & CERTIFICATIONS SECTION */}
+        <div>
+          <h2 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "40px", textAlign: "center", opacity: 0.9 }}>
+            Learning & <span>Certifications</span>
+          </h2>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "25px" }}>
+            {certificationsData.map((cert) => (
+              <div
+                key={cert.id}
+                ref={addToRefs}
+                data-highlight="false"
+                style={{
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  backgroundColor: "rgba(15, 15, 20, 0.6)",
+                  borderRadius: "16px",
+                  padding: "20px",
+                  backdropFilter: "blur(12px)",
+                  transition: "background-color 0.3s ease",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(25, 20, 35, 0.8)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(15, 15, 20, 0.6)"}
+              >
+                <img src={cert.image} alt={cert.title} style={{ borderRadius: "8px", width: "100%", height: "auto", marginBottom: "16px", opacity: 0.9 }} />
+                <h4 style={{ color: "#e2e8f0", fontSize: "1.1rem", fontWeight: "600", marginBottom: "4px" }}>
                   {cert.title}
                 </h4>
-                <h5 style={{ color: "#c084fc", fontSize: "0.9rem", fontWeight: "normal" }}>
-                  {cert.issuer}
-                </h5>
+                <h5 style={{ color: "#a855f7", fontSize: "0.85rem", opacity: 0.8 }}>{cert.issuer}</h5>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </div>
   );
