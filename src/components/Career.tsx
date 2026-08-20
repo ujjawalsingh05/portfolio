@@ -2,11 +2,9 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import "./styles/Career.css";
 
-// Importing directly from the new src/assets folder
 import cert1 from "../assets/cert1.png";
 import cert2 from "../assets/cert2.png";
 import cert3 from "../assets/cert3.png";
@@ -14,188 +12,280 @@ import cert4 from "../assets/cert4.png";
 import cert5 from "../assets/cert5.png"; 
 import cert6 from "../assets/cert6.png"; 
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(useGSAP);
 
-// 1. Split Data: Honors & Awards (The Big Wins)
-const honorsData = [
+const allCertificates = [
   {
-    id: 4,
+    id: "cert4",
     title: "2nd Position: Cod-A-FestX 3.0",
-    issuer: "InnovXus & LPU (My First Hackathon Win!)",
+    issuer: "InnovXus & LPU",
     image: cert4,
     badge: "🏆 Hackathon Winner",
-    highlight: true, // Triggers the special golden/purple UI
   },
-];
-
-// 2. Split Data: Learning & Certifications (Courses & Participation)
-const certificationsData = [
   {
-    id: 1,
+    id: "cert1",
     title: "Project Management Assessment",
     issuer: "LearnTube.ai",
     image: cert1,
   },
   {
-    id: 2,
+    id: "cert2",
     title: "COD-A-FESTX 3.0 Hackathon",
     issuer: "LYNQUP & LPU",
     image: cert2,
   },
   {
-    id: 3,
-    title: "Introduction to Artificial Intelligence",
+    id: "cert3",
+    title: "Intro to Artificial Intelligence",
     issuer: "Infosys Springboard",
     image: cert3,
   },
   {
-    id: 5,
+    id: "cert5",
     title: "Inovation Expo 2026", 
-    issuer: "The participation in Innotech 2026 LPU",       
+    issuer: "Innotech 2026 LPU",       
     image: cert5, 
   },
   {
-    id: 6,
+    id: "cert6",
     title: "Workshop on Web Development", 
-    issuer: "Fullstack Intelligence 1.0 (Hackathon for AI&ML)",       
+    issuer: "Fullstack Intelligence 1.0",       
     image: cert6,
   },
 ];
 
 const Career = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const trackRef = useRef<gsap.core.Tween | null>(null);
 
   useGSAP(() => {
-    const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 75%", 
-      },
+    // 1. Infinite Vertical Auto-Scroll
+    trackRef.current = gsap.to(".certs-track", {
+      yPercent: -50,
+      ease: "none",
+      duration: 25, 
+      repeat: -1,
     });
 
-    // Staggered Entrance
-    tl.from(cards, {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: "power3.out",
-    });
+    // 2. Real-Time Center Detection
+    const checkCenterHighlight = () => {
+      if (!containerRef.current) return;
 
-    // Ambient Levitation Effect
-    tl.add(() => {
-      cards.forEach((card, index) => {
-        const isHighlight = card.dataset.highlight === "true";
+      const rightSide = document.querySelector(".right-side-loop");
+      if (!rightSide) return;
+
+      const trackRect = rightSide.getBoundingClientRect();
+      const centerY = trackRect.top + trackRect.height / 2;
+
+      const certs = gsap.utils.toArray<HTMLElement>(".cert-image-wrapper");
+
+      certs.forEach((cert) => {
+        const certRect = cert.getBoundingClientRect();
+        const certCenterY = certRect.top + certRect.height / 2;
+        const distanceFromCenter = Math.abs(centerY - certCenterY);
+
+        // Threshold for active state
+        const isCenter = distanceFromCenter < 120;
+        const isAlreadyActive = cert.dataset.active === "true";
+        const certId = cert.dataset.id;
         
-        // Give the featured award a unique golden/purple glow, others get standard purple
-        const activeShadow = isHighlight 
-          ? "0 0 30px rgba(234, 179, 8, 0.3), inset 0 0 15px rgba(168, 85, 247, 0.2)" 
-          : "0 0 20px rgba(168, 85, 247, 0.25), inset 0 0 10px rgba(168, 85, 247, 0.05)";
+        const targetText = document.querySelector(`.cert-text-${certId}`) as HTMLElement;
 
-        gsap.to(card, {
-          y: index % 2 === 0 ? -8 : 8,
-          boxShadow: activeShadow,
-          duration: 3 + (index % 2) * 0.5,
-          yoyo: true,
-          repeat: -1,
-          ease: "sine.inOut",
-          delay: index * 0.15,
-        });
+        if (isCenter && !isAlreadyActive) {
+          cert.dataset.active = "true";
+          
+          gsap.to(cert, {
+            scale: 1.05,
+            opacity: 1,
+            boxShadow: "0 0 30px rgba(168, 85, 247, 0.4)",
+            borderColor: "rgba(168, 85, 247, 0.6)",
+            duration: 0.4,
+            ease: "power2.out",
+          });
+
+          if (targetText && targetText.dataset.active !== "true") {
+            targetText.dataset.active = "true";
+            gsap.fromTo(
+              targetText,
+              { y: 30, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" }
+            );
+          }
+        } else if (!isCenter && isAlreadyActive) {
+          cert.dataset.active = "false";
+
+          gsap.to(cert, {
+            scale: 0.9,
+            opacity: 0.4,
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
+            borderColor: "rgba(255, 255, 255, 0.05)",
+            duration: 0.4,
+            ease: "power2.out",
+          });
+
+          if (targetText && targetText.dataset.active === "true") {
+            targetText.dataset.active = "false";
+            gsap.to(targetText, {
+              y: -30,
+              opacity: 0,
+              duration: 0.4,
+              ease: "power2.out",
+              overwrite: "auto",
+            });
+          }
+        }
       });
-    });
+    };
 
-  }, { scope: containerRef });
+    gsap.ticker.add(checkCenterHighlight);
 
-  // Helper to add refs seamlessly across both mapped arrays
-  const addToRefs = (el: HTMLDivElement | null) => {
-    if (el && !cardsRef.current.includes(el)) {
-      cardsRef.current.push(el);
-    }
-  };
+    return () => {
+      gsap.ticker.remove(checkCenterHighlight);
+    };
+  }, []);
 
   return (
-    <div className="career-section section-container" ref={containerRef} style={{ padding: "100px 0" }}>
-      <div className="career-container" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
-        
-        {/* HONORS & AWARDS SECTION */}
-        <div style={{ marginBottom: "80px" }}>
-          <h2 style={{ fontSize: "3rem", fontWeight: "900", marginBottom: "40px", textAlign: "center" }}>
-            Honors & <span>Awards</span>
+    <div
+      className="career-section section-container"
+      ref={containerRef}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        overflow: "hidden",
+        backgroundColor: "transparent",
+      }}
+    >
+      {/* MASSIVE BACKGROUND TEXT */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: "18vw",
+          fontWeight: "900",
+          color: "rgba(255, 255, 255, 0.02)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      >
+        ACHIEVE
+      </div>
+
+      {/* LEFT SIDE: DYNAMIC TEXT */}
+      <div
+        style={{
+          width: "50%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          paddingLeft: "8%",
+          zIndex: 10,
+        }}
+      >
+        <div style={{ marginBottom: "50px" }}>
+          <h2 style={{ fontSize: "3rem", color: "#ffffff", margin: 0, fontWeight: "900" }}>
+            Honors & <span style={{ color: "#c084fc" }}>Certifications</span>
           </h2>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "30px" }}>
-            {honorsData.map((award) => (
-              <div
-                key={award.id}
-                ref={addToRefs}
-                data-highlight="true"
-                style={{
-                  position: "relative",
-                  border: "1px solid rgba(234, 179, 8, 0.4)", // Gold tinted border
-                  background: "linear-gradient(145deg, rgba(20, 15, 30, 0.9) 0%, rgba(15, 15, 20, 0.95) 100%)",
-                  borderRadius: "20px",
-                  padding: "24px",
-                  overflow: "hidden",
-                  backdropFilter: "blur(16px)",
-                }}
-              >
-                {/* Winner Badge */}
+        </div>
+
+        <div style={{ position: "relative", height: "180px" }}>
+          {allCertificates.map((cert) => (
+            <div
+              key={cert.id}
+              className={`cert-text-${cert.id}`}
+              data-active="false"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                opacity: 0, 
+                pointerEvents: "none",
+              }}
+            >
+              {cert.badge && (
                 <div style={{
-                  position: "absolute", top: "20px", right: "20px",
+                  display: "inline-block",
                   background: "rgba(234, 179, 8, 0.15)", color: "#facc15",
                   padding: "6px 14px", borderRadius: "20px", fontSize: "0.85rem", fontWeight: "bold",
-                  border: "1px solid rgba(234, 179, 8, 0.3)", zIndex: 10
+                  border: "1px solid rgba(234, 179, 8, 0.3)", marginBottom: "15px"
                 }}>
-                  {award.badge}
+                  {cert.badge}
                 </div>
-
-                <img src={award.image} alt={award.title} style={{ borderRadius: "12px", width: "100%", height: "auto", marginBottom: "20px", boxShadow: "0 8px 30px rgba(0,0,0,0.5)" }} />
-                
-                <h4 style={{ color: "#ffffff", fontSize: "1.3rem", fontWeight: "bold", marginBottom: "8px" }}>
-                  {award.title}
-                </h4>
-                <h5 style={{ color: "#c084fc", fontSize: "1rem" }}>{award.issuer}</h5>
+              )}
+              <h3 style={{ fontSize: "2.8rem", color: "#ffffff", fontWeight: "bold", margin: "0 0 10px 0", lineHeight: 1.1 }}>
+                {cert.title}
+              </h3>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "3px", height: "16px", backgroundColor: "#c084fc" }} />
+                <span style={{ color: "#a3a3a3", fontSize: "1.1rem", letterSpacing: "1px" }}>
+                  {cert.issuer}
+                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* LEARNING & CERTIFICATIONS SECTION */}
-        <div>
-          <h2 style={{ fontSize: "2.5rem", fontWeight: "800", marginBottom: "40px", textAlign: "center", opacity: 0.9 }}>
-            Learning & <span>Certifications</span>
-          </h2>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "25px" }}>
-            {certificationsData.map((cert) => (
-              <div
-                key={cert.id}
-                ref={addToRefs}
-                data-highlight="false"
-                style={{
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                  backgroundColor: "rgba(15, 15, 20, 0.6)",
-                  borderRadius: "16px",
-                  padding: "20px",
-                  backdropFilter: "blur(12px)",
-                  transition: "background-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(25, 20, 35, 0.8)"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(15, 15, 20, 0.6)"}
-              >
-                <img src={cert.image} alt={cert.title} style={{ borderRadius: "8px", width: "100%", height: "auto", marginBottom: "16px", opacity: 0.9 }} />
-                <h4 style={{ color: "#e2e8f0", fontSize: "1.1rem", fontWeight: "600", marginBottom: "4px" }}>
-                  {cert.title}
-                </h4>
-                <h5 style={{ color: "#a855f7", fontSize: "0.85rem", opacity: 0.8 }}>{cert.issuer}</h5>
-              </div>
-            ))}
-          </div>
+      {/* RIGHT SIDE: INFINITE CERTIFICATE LOOP */}
+      <div
+        className="right-side-loop"
+        onMouseEnter={() => trackRef.current?.pause()}
+        onMouseLeave={() => trackRef.current?.play()}
+        style={{
+          width: "50%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 10,
+          maskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
+        }}
+      >
+        <div
+          className="certs-track"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "60px",
+            paddingTop: "50vh",
+          }}
+        >
+          {[...allCertificates, ...allCertificates].map((cert, index) => (
+            <div
+              key={index}
+              className="cert-image-wrapper"
+              data-id={cert.id}
+              data-active="false"
+              style={{
+                width: "400px", 
+                height: "280px", 
+                borderRadius: "16px",
+                border: "1px solid rgba(255, 255, 255, 0.05)",
+                backgroundColor: "rgba(20, 20, 25, 0.7)",
+                backdropFilter: "blur(10px)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                opacity: 0.4, 
+                transform: "scale(0.9)", 
+                cursor: "pointer",
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
+                overflow: "hidden"
+              }}
+            >
+              <img
+                src={cert.image}
+                alt={cert.title}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "12px" }}
+              />
+            </div>
+          ))}
         </div>
-
       </div>
     </div>
   );
