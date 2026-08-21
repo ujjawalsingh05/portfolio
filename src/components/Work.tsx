@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useRef } from "react";
 
+import agroshieldImg from "../assets/agroshield.jpg"; // Newly added AgroShield image
 import kisansenseImg from "../assets/kisansense.jpg";
 import krishisetuImg from "../assets/krishisetu.jpg";
 import environmentalImg from "../assets/environmental.jpg";
@@ -12,6 +13,14 @@ import collegetvImg from "../assets/collegetv.jpg";
 gsap.registerPlugin(useGSAP);
 
 const projectsData = [
+  {
+    name: "AgroShield (Patent Pending) 🚀",
+    category: "Embedded AI / IoT Hardware",
+    description:
+      "[PATENT APPLIED] A solar-powered smart agriculture monitoring system. It processes real-time environmental data at the edge utilizing ESP32-CAM and environmental sensors, running lightweight CNNs via TinyML to autonomously optimize crop health and resource usage.",
+    tech: "ESP32-CAM, Arduino, TinyML, TensorFlow Lite, Hardware Sensors",
+    image: agroshieldImg,
+  },
   {
     name: "Kisan Sense",
     category: "Agri-Tech Platform",
